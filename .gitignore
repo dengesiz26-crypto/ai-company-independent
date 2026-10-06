@@ -1,0 +1,25 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*.so
+
+# Environment files
+.env
+.env.*
+!.env.example
+
+# Local data
+backend/data/
+frontend/.expo/
+frontend/dist/
+
+# Node
+node_modules/
+
+# IDE/editor
+.vscode/
+.idea/
+
+# OS files
+.DS_Store
+Thumbs.db
