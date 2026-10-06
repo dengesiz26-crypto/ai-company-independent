@@ -12,7 +12,7 @@ export default function AgentsScreen() {
 
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
-      <Text style={styles.title}>Agents</Text>
+      <Text style={styles.title}>Agent team</Text>
       {agents.map((agent) => (
         <View key={agent.id} style={styles.card}>
           <Text style={styles.name}>{agent.name}</Text>
@@ -28,10 +28,13 @@ export default function AgentsScreen() {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: theme.colors.background },
   content: { padding: 20 },
-  title: { fontSize: 28, color: theme.colors.text, marginBottom: 16 },
+  title: { fontSize: 30, color: theme.colors.text, marginBottom: 18 },
   card: { backgroundColor: theme.colors.panel, borderRadius: 14, padding: 16, marginBottom: 12 },
   name: { color: theme.colors.text, fontSize: 20, fontWeight: '700' },
-  role: { color: theme.colors.primary, marginBottom: 6 },
+  role: { color: theme.colors.primary, marginBottom: 8 },
   text: { color: theme.colors.text, marginBottom: 8 },
   meta: { color: theme.colors.muted },
 });
+
+
+path="frontend/app/(tabs)/agents.tsx" 

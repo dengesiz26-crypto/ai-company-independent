@@ -12,7 +12,7 @@ export default function TasksScreen() {
 
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
-      <Text style={styles.title}>Tasks</Text>
+      <Text style={styles.title}>Operation tasks</Text>
       {tasks.map((task) => (
         <View key={task.id} style={styles.card}>
           <Text style={styles.taskTitle}>{task.title}</Text>
@@ -27,9 +27,12 @@ export default function TasksScreen() {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: theme.colors.background },
   content: { padding: 20 },
-  title: { fontSize: 28, color: theme.colors.text, marginBottom: 16 },
+  title: { fontSize: 30, color: theme.colors.text, marginBottom: 18 },
   card: { backgroundColor: theme.colors.panel, borderRadius: 14, padding: 16, marginBottom: 12 },
   taskTitle: { color: theme.colors.text, fontSize: 18, fontWeight: '700', marginBottom: 6 },
   text: { color: theme.colors.text },
   meta: { color: theme.colors.muted, marginTop: 8 },
 });
+
+
+path="frontend/app/(tabs)/tasks.tsx" 

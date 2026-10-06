@@ -1,36 +1,46 @@
 from __future__ import annotations
 
-from pathlib import Path
 from typing import Any
-import json
+
+from pydantic import BaseModel, Field
 
 
-class JsonStore:
-    def __init__(self, base_dir: str | Path):
-        self.base_dir = Path(base_dir)
-        self.base_dir.mkdir(parents=True, exist_ok=True)
+class CompanyInput(BaseModel):
+    name: str | None = None
+    objective: str | None = None
+    autonomy: bool = True
+    status: str = "running"
+    budget: float | None = None
+    revenue_target: float | None = None
 
-    def _path(self, name: str) -> Path:
-        return self.base_dir / f"{name}.json"
 
-    def load(self, name: str, default: Any = None) -> Any:
-        path = self._path(name)
-        if not path.exists():
-            if default is None:
-                return []
-            return default
-        try:
-            return json.loads(path.read_text(encoding="utf-8"))
-        except json.JSONDecodeError:
-            return default if default is not None else []
+class AgentInput(BaseModel):
+    name: str
+    role: str = "Generalist"
+    department: str = "Operations"
+    objective: str | None = None
+    tools: list[str] = Field(default_factory=list)
+    priority: int = 5
 
-    def save(self, name: str, payload: Any) -> Any:
-        path = self._path(name)
-        path.write_text(json.dumps(payload, indent=2, ensure_ascii=False), encoding="utf-8")
-        return payload
 
-    def append(self, name: str, item: dict) -> dict:
-        data = self.load(name, [])
-        data.append(item)
-        self.save(name, data)
-        return item
+class TaskInput(BaseModel):
+    title: str
+    description: str = ""
+    task_type: str = "general"
+    priority: int = 5
+    assignee: str | None = None
+    metadata: dict[str, Any] = Field(default_factory=dict)
+
+
+class GmailConfigInput(BaseModel):
+    client_id: str | None = None
+    client_secret: str | None = None
+    redirect_uri: str | None = None
+
+
+class ResearchInput(BaseModel):
+    query: str
+    mode: str = "market"
+
+
+path="backend/app/schemas.py" 

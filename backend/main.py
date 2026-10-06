@@ -1,26 +1,48 @@
-from fastapi import FastAPI
-from fastapi.middleware.cors import CORSMiddleware
-from app.routes import router
-from app.engine import bootstrap
+from __future__ import annotations
 
-app = FastAPI(title="AICorpOS", version="1.0.0")
-
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
-
-app.include_router(router, prefix="/api")
+import httpx
+from bs4 import BeautifulSoup
 
 
-@app.on_event("startup")
-async def startup_event() -> None:
-    await bootstrap()
+async def search_web(query: str, limit: int = 5) -> list[dict]:
+    try:
+        async with httpx.AsyncClient(timeout=18.0, headers={"User-Agent": "Mozilla/5.0"}) as client:
+            response = await client.get("https://duckduckgo.com/html/", params={"q": query})
+            response.raise_for_status()
+        soup = BeautifulSoup(response.text, "html.parser")
+        results: list[dict] = []
+        for index, entry in enumerate(soup.select(".result")[:limit], start=1):
+            title = entry.select_one(".result__title")
+            link = entry.select_one(".result__a")
+            snippet = entry.select_one(".result__snippet")
+            results.append({
+                "rank": index,
+                "title": title.get_text(" ", strip=True) if title else f"Result {index}",
+                "url": link.get("href") if link else "",
+                "snippet": snippet.get_text(" ", strip=True) if snippet else "",
+            })
+        return results
+    except Exception:
+        return [{
+            "rank": 1,
+            "title": query,
+            "url": "https://www.google.com/search?q=" + query.replace(" ", "+"),
+            "snippet": "Live external search failed. The app kept a fallback result so the workflow continues.",
+        }]
 
 
-@app.get("/health")
-async def health() -> dict:
-    return {"ok": True, "service": "AICorpOS"}
+async def read_page(url: str) -> dict:
+    async with httpx.AsyncClient(timeout=20.0, headers={"User-Agent": "Mozilla/5.0"}) as client:
+        response = await client.get(url)
+        response.raise_for_status()
+    soup = BeautifulSoup(response.text, "html.parser")
+    for tag in soup(["script", "style", "noscript", "svg", "iframe"]):
+        tag.decompose()
+    text = " ".join(soup.stripped_strings)
+    return {"url": url, "text": text[:8000]}
+
+
+__all__ = ["search_web", "read_page"]
+
+
+path="backend/app/research.py" 
